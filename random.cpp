@@ -9,11 +9,15 @@ using namespace std;
 #include<objloader.hpp>
 #include<shapes.hpp>
 
+
 /* Global variables */
 char title[] = "3D Shapes with animation";
 GLfloat anglePyramid = 0.0f;  // Rotational angle for pyramid [NEW]
 GLfloat angleCube = 0.0f;     // Rotational angle for cube [NEW]
 int refreshMills = 15;        // refresh interval in milliseconds [NEW]
+vector<vertex> Eindex;
+vector<vertex> UVindex;
+vector<vertex> Nindex;
  
 /* Initialize OpenGL Graphics */
 void initGL() {
@@ -132,13 +136,14 @@ void obj_display(){
 	glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
 	vector<vertex> edges,ac,ad;
 	bool a = loadOBJ("cube_texture.obj",edges,ac,ad);
-	cout<<"obj file loaded properly :)"<<endl;
-   // Render a color-cube consisting of 6 quads with different colors
+	//cout<<"obj file loaded properly :)"<<endl;
 	glLoadIdentity();                 // Reset the model-view matrix
 	glTranslatef(0.0f, 0.0f, -7.0f);  // Move right and into the screen
-	glRotatef(angleCube, 1.0f, 1.0f, 1.0f);  // Rotate about (1,1,1)-axis [NEW]
-	glBegin(GL_TRIANGLES); 
+	glRotatef(angleCube, 1.0f, 1.0f, 1.0f);  // Rotate about (1,1,1)-axis
+	glBegin(GL_TRIANGLES);
+	GLuint sani;
 	for(unsigned int i=0;i<edges.size();i++){
+		glColor3f(0.0f,1.0f,0.0f);
 		glVertex3f(edges[i].position.x,edges[i].position.y, edges[i].position.z);
 	}
 	glEnd();
@@ -173,15 +178,14 @@ void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integ
 int main(int argc, char** argv) {
 
 	glutInit(&argc, argv);            // Initialize GLUT
-   glutInitDisplayMode(GLUT_DOUBLE); // Enable double buffered mode
-   glutInitWindowSize(640, 480);   // Set the window's initial width & height
-   glutInitWindowPosition(50, 50); // Position the window's initial top-left corner
-   glutCreateWindow(title);          // Create window with the given title
-   glutDisplayFunc(obj_display);       // Register callback handler for window re-paint event
-   glutReshapeFunc(reshape);       // Register callback handler for window re-size event
-   initGL();                       // Our own OpenGL initialization
-   glutTimerFunc(0, timer, 0);     // First timer call immediately [NEW]
-   glutMainLoop();                 // Enter the infinite event-processing loop
-   
-   return 0;
+	glutInitDisplayMode(GLUT_DOUBLE); // Enable double buffered mode
+	glutInitWindowSize(640, 480);   // Set the window's initial width & height
+	glutInitWindowPosition(50, 50); // Position the window's initial top-left corner
+	glutCreateWindow(title);          // Create window with the given title
+	glutDisplayFunc(obj_display);       // Register callback handler for window re-paint event
+	glutReshapeFunc(reshape);       // Register callback handler for window re-size event
+	initGL();                       // Our own OpenGL initialization
+	glutTimerFunc(0, timer, 0);     // First timer call immediately
+	glutMainLoop();                 // Enter the infinite event-processing loop
+	return 0;
 }

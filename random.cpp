@@ -1,6 +1,6 @@
 #include <GL/glew.h>
 #include <GL/glut.h>  // GLUT, include glu.h and gl.h
-#include <glm/glm.hpp>
+//#include <glm/glm.hpp>
 #include <vector>
 #include <stdio.h>
 #include <cstring>
@@ -37,7 +37,7 @@ GLuint PMatrixID ;
 vector<vertex> Eindex;
 vector<vertex> UVindex;
 vector<vertex> Nindex;
-vector<glm::vec2> out_uvs;
+//vector<glm::vec2> out_uvs;
 #define _OBJfileRead_
 #endif
 
@@ -106,18 +106,18 @@ void obj_display(){
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D,PTexture);
 
-	gluSphere(qobj,10,50,50); 
+	gluSphere(qobj,10,10000000,10000000); 
 
 	gluDeleteQuadric(qobj); 
 	glDisable(GL_TEXTURE_2D);
 
-	glDisable(GL_TEXTURE_2D);
+	//glDisable(GL_TEXTURE_2D);
 	
 	
 	glutSwapBuffers();
 	angleCube -= 0.15f;
 	
-	glDisableVertexAttribArray(1);
+	//glDisableVertexAttribArray(1);
 }
 /* Called back when timer expired [NEW] */
 void timer(int value) {
@@ -146,13 +146,13 @@ void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integ
 int main(int argc, char** argv) {
 	//vector<vertex> edges,ac,ad;
 	
-	bool a = loadOBJ("cube.obj",Eindex,UVindex,Nindex);
-	for(unsigned int i=0;i<UVindex.size();i++){
+	//bool a = loadOBJ("cube.obj",Eindex,UVindex,Nindex);
+	/*for(unsigned int i=0;i<UVindex.size();i++){
 		glm::vec2 temp1;
 		temp1.x = UVindex[i].position.x;
 		temp1.y = UVindex[i].position.y;
 		out_uvs.push_back(temp1);
-	}
+	}*/
 
 
 	glutInit(&argc, argv);            // Initialize GLUT
@@ -163,37 +163,37 @@ int main(int argc, char** argv) {
 	//glClearColor(0.0f, 0.0f ,0.4f , 0.0f);
 	glewInit();
 	printf("c1\n");
-	GLuint programID=LoadShaders("TransformVertexShader.vertexshader","TextureFragmentShader.fragmentshader");
+	//GLuint programID=LoadShaders("TransformVertexShader.vertexshader","TextureFragmentShader.fragmentshader");
 	//GLuint Texture= loadBMP_custom("lol.bmp");
-	GLuint Texture = loadDDS("uvmap.DDS");
+	GLuint Texture = loadDDS("uvmap.dds");
 	
-	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+	//GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 
-	GLuint TextureID= glGetUniformLocation(programID, "myTextureSampler");
+	//GLuint TextureID= glGetUniformLocation(programID, "myTextureSampler");
 	
-	GLuint uvbuffer;
+	//GLuint uvbuffer;
 	PTexture = Texture;
-	PTextureID = TextureID;
-	PprogramID = programID;
-	Puvbuffer = uvbuffer;
-	PMatrixID= MatrixID;
+	//PTextureID = TextureID;
+	//PprogramID = programID;
+	//Puvbuffer = uvbuffer;
+	//PMatrixID= MatrixID;
 	//l
 	glutDisplayFunc(obj_display);       // Register callback handler for window re-paint event
 	//glClearColor(0.0f, 0.0f ,0.4f , 0.0f);
 	glutReshapeFunc(reshape);       // Register callback handler for window re-size event
 	initGL();  // Our own OpenGL initialization                  
 	
-	glGenBuffers (1,&uvbuffer);
-	glBindBuffer (GL_ARRAY_BUFFER, uvbuffer);
-	glBufferData (GL_ARRAY_BUFFER, out_uvs.size()*sizeof(glm::vec2), &out_uvs[0], GL_STATIC_DRAW);
+	//glGenBuffers (1,&uvbuffer);
+	//glBindBuffer (GL_ARRAY_BUFFER, uvbuffer);
+	//glBufferData (GL_ARRAY_BUFFER, out_uvs.size()*sizeof(glm::vec2), &out_uvs[0], GL_STATIC_DRAW);
 	glutTimerFunc(0, timer, 0);     // First timer call immediately
 	
 
 	glutMainLoop();                 // Enter the infinite event-processing loop
 	
-	glDeleteBuffers(1, &uvbuffer);
-	glDeleteProgram(programID);
-	glDeleteTextures(1, &TextureID);
+	//glDeleteBuffers(1, &uvbuffer);
+	//glDeleteProgram(programID);
+	//glDeleteTextures(1, &TextureID);
 	
 	return 0;
 }

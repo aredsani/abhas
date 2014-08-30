@@ -9,6 +9,7 @@ using namespace std;
 #include<objloader.hpp>
 #include<shapes.hpp>
 #include<texture.hpp>
+#include<shader.hpp>
 
 /* Global variables */
 char title[] = "3D Shapes with animation";
@@ -180,7 +181,12 @@ void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integ
 /* Main function: GLUT runs as a console application starting at main() */
 int main(int argc, char** argv) {
 	//vector<vertex> edges,ac,ad;
-	bool a = loadOBJ("test_2.obj",Eindex,UVindex,Nindex);
+	
+	//GLuint programID=LoadShaders("TransformVertexShader.vertexshader","TextureFragmentShader.fragmentshader");
+	//GLuint Texture= loadBMP_custom("lawl.bmp");
+	//GLuint TextureID= glGetUniformLocation(programID, "myTextureSample");
+	
+	bool a = loadOBJ("test_3.obj",Eindex,UVindex,Nindex);
 	glutInit(&argc, argv);            // Initialize GLUT
 	glutInitDisplayMode(GLUT_DOUBLE); // Enable double buffered mode
 	glutInitWindowSize(640, 480);   // Set the window's initial width & height
@@ -189,7 +195,6 @@ int main(int argc, char** argv) {
 	//glClearColor(0.0f, 0.0f ,0.4f , 0.0f);
 	glutDisplayFunc(obj_display);       // Register callback handler for window re-paint event
 	//glClearColor(0.0f, 0.0f ,0.4f , 0.0f);
-	
 	glutReshapeFunc(reshape);       // Register callback handler for window re-size event
 	initGL();                       // Our own OpenGL initialization
 	glutTimerFunc(0, timer, 0);     // First timer call immediately

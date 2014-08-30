@@ -20,7 +20,7 @@ float ang(Point p1, Point p2, Point p3){
   return (first.x*second.x+first.y*second.y)/(mag1*mag2);
 }
 
-void gestureREC(){
+void *gestureREC(void * argument){
 	VideoCapture cap(0);
 	Mat frame1, frame2;
 	Point Start1, Start2, End1, End2; Start1.x=Start1.y=Start2.x=Start2.y=End1.x=End1.y=End2.x=End2.y=0;
@@ -30,7 +30,7 @@ void gestureREC(){
  Point avMc1; avMc1.x=0; avMc1.y=0;
  namedWindow("Window1",CV_WINDOW_AUTOSIZE);
  namedWindow("Window2",CV_WINDOW_AUTOSIZE);
- bool flag1_1= false, flag1_2= false, flag2_1= false, flag2_2= false, buffer=true;
+ bool flag1_1= false, flag2_1= false, buffer=true;
  while(1)
  {
   if(counter==n) {counter=0; avMc1.x=avMc1.y=0; buffer=false;}
@@ -150,7 +150,7 @@ void gestureREC(){
  counter++;
  }
  cout<<moveoutput<<endl;
- return;
+ return 0;
 }
 
  

@@ -12,6 +12,6 @@ using namespace cv;
 
 float dist(Point p1, Point p2);
 float ang(Point p1, Point p2, Point p3);
-void gestureREC();
+void *gestureREC(void * argument);
 
 #endif

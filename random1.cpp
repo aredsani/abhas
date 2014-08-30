@@ -1,5 +1,6 @@
-#include <boost/program_options.hpp>
-namespace po = boost::program_options;
+#include <boost/thread.hpp>
+#include <boost/date_time.hpp>
+
 #include <GL/gl.h>
 #include <GL/glut.h>
 #include <vector>
@@ -13,7 +14,11 @@ namespace po = boost::program_options;
 #include <iterator>
 
 using namespace std;
-
+extern "C"
+ {
+    #include <pthread.h>
+    #include <unistd.h>
+ }
 GLuint texture;
 double angle = 0;
 typedef struct{
@@ -23,7 +28,8 @@ typedef struct{
     double U;
     double V;
 }VERTICES;
-
+int argc1;
+char **argv1;
 const double PI = 3.1415926535897;
 const int space = 10;
 const int VertexCount = (90 / space) * (360 / space) * 4;
@@ -134,19 +140,82 @@ void reshape (int w, int h) {
 
     glMatrixMode (GL_MODELVIEW);
 }
-int main (int argc,char **argv){
-	glutInit (&argc, argv);
+void workerFunc(){
+	boost::posix_time::seconds workTime(3);
+	std::cout << "Worker: running" << std::endl;
+    // Pretend to do something useful...
+	boost::this_thread::sleep(workTime);
+	std::cout << "Worker: finished" << std::endl;
+}
+void *junky(void * argument){
+	glutInit (&argc1, argv1);
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize (500, 500);
     glutInitWindowPosition (100, 100);
     glutCreateWindow ("A basic OpenGL Window");
     init();
     CreateSphere(300,0,0,0);
-    //gestureREC();
+	glutDisplayFunc (display);
+	glutIdleFunc (display);
+	glutReshapeFunc (reshape);
+	glutMainLoop ();
+	return 0;
+}
+void  * function1(void * argument);
+void  * function2(void * argument);
+int main (int argc,char **argv){
+	argc1=argc;
+	argv1=argv;
+	/*glutInit (&argc, argv);
+    glutInitDisplayMode (GLUT_DOUBLE | GLUT_DEPTH);
+    glutInitWindowSize (500, 500);
+    glutInitWindowPosition (100, 100);
+    glutCreateWindow ("A basic OpenGL Window");
+    init();
+    CreateSphere(300,0,0,0);
+    
     glutDisplayFunc (display);
-    glutIdleFunc (display);
+    //glutIdleFunc (display);
     glutReshapeFunc (reshape);
     glutMainLoop ();
+
+    std::cout << "main: startup" << std::endl;
+	boost::thread workerThread(gestureREC),workerThread2(junky);
+    
+
+    std::cout << "main: waiting for thread" << std::endl;
+	workerThread2.join();
+    workerThread.join();
+    
+
+    std::cout << "main: done" << std::endl;*/
+    pthread_t t1, t2 ; // declare 2 threads.
+    pthread_create( &t1, NULL, junky,NULL); // create a thread running function1
+    pthread_create( &t2, NULL, gestureREC,NULL); // create a thread running function2
+
+    // Because all created threads are terminated when main() finishes, we have
+    // to give the threads some time to finish. Unfortunately for function1, main()
+    // will give only 1 second, but function1 needs at least 2 seconds. So function1 will
+    // probably be terminated before it can finish. This is a BAD way to manage threads.
+    sleep(1000);
+    
+
+
+
+    
+    return 0;
+}
+
+void * function1(void * argument)
+{
+    cout << " hello " << endl ;
+    sleep(2); // fall alseep here for 2 seconds...
+    return 0;
+}
+
+void * function2(void * argument)
+{
+    cout << " world "  << endl ;
     return 0;
 }
 GLuint LoadTextureRAW( const char * filename ){

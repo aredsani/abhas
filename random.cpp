@@ -6,7 +6,8 @@
 #include <cstring>
 #include <string>
 #include <vector>
-#include <iostream> 
+#include <iostream>
+#include <maya.hpp> 
 using namespace std;
 #include<objloader.hpp>
 #include<shapes.hpp>
@@ -41,6 +42,7 @@ vector<vertex> Nindex;
 #define _OBJfileRead_
 #endif
 
+GLuint LoadTextureRAW( const char * filename );
 
 
 /* Initialize OpenGL Graphics */
@@ -66,7 +68,7 @@ void obj_display(){
 	//cout<<"fsjfa"<<endl;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
 	glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
-	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glLoadIdentity();                 // Reset the model-view matrix
 	
 	/*glUseProgram(PprogramID);
@@ -79,16 +81,21 @@ void obj_display(){
 	
 	//glUniformMatrix4fv(PMatrixID, 1, GL_FALSE, &MVP[0][0]);
 	*/
-	
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D,PTexture);
 	glTranslatef(0.0f, 0.0f, -30.0f);  // Move right and into the screen
 	glRotatef(angleCube, 1.0f, 1.0f, 1.0f);  // Rotate about (1,1,1)-axis
-	/*glBegin(GL_TRIANGLES);
+	
+	glBegin(GL_TRIANGLE_STRIP);
 	for(unsigned int i=0;i<Eindex.size();i++){
-		glColor3f(0.0f,1.0f,0.0f);
+		glTexCoord2f(UVindex[i].position.x,UVindex[i].position.x);
 		glVertex3f(Eindex[i].position.x,Eindex[i].position.y, Eindex[i].position.z);
-		
 	}
-	glEnd();*/
+	for(unsigned int i=0;i<Eindex.size();i++){
+		glTexCoord2f(UVindex[i].position.x,-UVindex[i].position.x);
+		glVertex3f(Eindex[i].position.x,Eindex[i].position.y, -Eindex[i].position.z);
+	}
+	glEnd();
 	/*glEnable( GL_TEXTURE_2D );
 	glBindTexture( GL_TEXTURE_2D, PTexture);
 
@@ -99,7 +106,7 @@ void obj_display(){
 
 	glutSolidSphere(10,50,50);*/
 	
-	GLUquadric *qobj = gluNewQuadric(); 
+	/*GLUquadric *qobj = gluNewQuadric(); 
 
 	gluQuadricTexture(qobj,GL_TRUE); 
 
@@ -109,7 +116,7 @@ void obj_display(){
 	gluSphere(qobj,10,10000000,10000000); 
 
 	gluDeleteQuadric(qobj); 
-	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_2D);*/
 
 	//glDisable(GL_TEXTURE_2D);
 	
@@ -146,7 +153,7 @@ void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integ
 int main(int argc, char** argv) {
 	//vector<vertex> edges,ac,ad;
 	
-	//bool a = loadOBJ("cube.obj",Eindex,UVindex,Nindex);
+	bool a = loadOBJ("sphere.obj",Eindex,UVindex,Nindex);
 	/*for(unsigned int i=0;i<UVindex.size();i++){
 		glm::vec2 temp1;
 		temp1.x = UVindex[i].position.x;
@@ -154,7 +161,7 @@ int main(int argc, char** argv) {
 		out_uvs.push_back(temp1);
 	}*/
 
-
+	//gestureREC();
 	glutInit(&argc, argv);            // Initialize GLUT
 	glutInitDisplayMode(GLUT_DOUBLE); // Enable double buffered mode
 	glutInitWindowSize(640, 480);   // Set the window's initial width & height
@@ -165,7 +172,7 @@ int main(int argc, char** argv) {
 	printf("c1\n");
 	//GLuint programID=LoadShaders("TransformVertexShader.vertexshader","TextureFragmentShader.fragmentshader");
 	//GLuint Texture= loadBMP_custom("lol.bmp");
-	GLuint Texture = loadDDS("uvmap.dds");
+	GLuint Texture = LoadTextureRAW("earth.bmp");
 	
 	//GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 
@@ -197,3 +204,62 @@ int main(int argc, char** argv) {
 	
 	return 0;
 }
+GLuint LoadTextureRAW( const char * filename )
+{
+
+  GLuint texture;
+
+  int width, height;
+
+  unsigned char * data;
+
+  FILE * file;
+
+
+
+  file = fopen( filename, "rb" );
+
+  if ( file == NULL ) return 0;
+
+
+
+  width = 3200;
+
+  height = 1600;
+
+  data = (unsigned char *)malloc( width * height * 3 );
+
+
+    //int size = fseek(file,);
+  fread( data, width * height * 3, 1, file );
+
+  fclose( file );
+
+for(int i = 0; i < width * height ; ++i)
+{
+    int index = i*3;
+    unsigned char B,R;
+    B = data[index];
+    R = data[index+2];
+    //B = data[index];
+    data[index] = R;
+    data[index+2] = B;
+
+}
+
+
+    glGenTextures( 1, &texture );
+    glBindTexture( GL_TEXTURE_2D, texture );
+    glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,GL_MODULATE );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST );
+
+
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_REPEAT );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_REPEAT );
+    gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width, height,GL_RGB, GL_UNSIGNED_BYTE, data );
+    free( data );
+
+return texture;
+}
+

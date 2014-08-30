@@ -8,17 +8,20 @@
 using namespace std;
 #include<objloader.hpp>
 #include<shapes.hpp>
-
+#include<texture.hpp>
 
 /* Global variables */
 char title[] = "3D Shapes with animation";
 GLfloat anglePyramid = 0.0f;  // Rotational angle for pyramid [NEW]
 GLfloat angleCube = 0.0f;     // Rotational angle for cube [NEW]
 int refreshMills = 15;        // refresh interval in milliseconds [NEW]
+
+#ifndef _OBJfileRead_
 vector<vertex> Eindex;
 vector<vertex> UVindex;
 vector<vertex> Nindex;
- 
+#define _OBJfileRead_
+#endif
 /* Initialize OpenGL Graphics */
 void initGL() {
    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set background color to black and opaque
@@ -32,7 +35,7 @@ void initGL() {
 /* Handler for window-repaint event. Called back when the window first appears and
    whenever the window needs to be re-painted. */
 void display() {
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
    glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
  
    // Render a color-cube consisting of 6 quads with different colors
@@ -134,17 +137,17 @@ void display() {
 void obj_display(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
 	glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
-	vector<vertex> edges,ac,ad;
-	bool a = loadOBJ("cube_texture.obj",edges,ac,ad);
+	//vector<vertex> edges,ac,ad;
+	//bool a = loadOBJ("cube_texture.obj",edges,ac,ad);
 	//cout<<"obj file loaded properly :)"<<endl;
 	glLoadIdentity();                 // Reset the model-view matrix
-	glTranslatef(0.0f, 0.0f, -7.0f);  // Move right and into the screen
+	glTranslatef(0.0f, 0.0f, -30.0f);  // Move right and into the screen
 	glRotatef(angleCube, 1.0f, 1.0f, 1.0f);  // Rotate about (1,1,1)-axis
 	glBegin(GL_TRIANGLES);
 	GLuint sani;
-	for(unsigned int i=0;i<edges.size();i++){
+	for(unsigned int i=0;i<Eindex.size();i++){
 		glColor3f(0.0f,1.0f,0.0f);
-		glVertex3f(edges[i].position.x,edges[i].position.y, edges[i].position.z);
+		glVertex3f(Eindex[i].position.x,Eindex[i].position.y, Eindex[i].position.z);
 	}
 	glEnd();
 	glutSwapBuffers();
@@ -176,13 +179,17 @@ void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integ
  
 /* Main function: GLUT runs as a console application starting at main() */
 int main(int argc, char** argv) {
-
+	//vector<vertex> edges,ac,ad;
+	bool a = loadOBJ("test_2.obj",Eindex,UVindex,Nindex);
 	glutInit(&argc, argv);            // Initialize GLUT
 	glutInitDisplayMode(GLUT_DOUBLE); // Enable double buffered mode
 	glutInitWindowSize(640, 480);   // Set the window's initial width & height
 	glutInitWindowPosition(50, 50); // Position the window's initial top-left corner
 	glutCreateWindow(title);          // Create window with the given title
+	//glClearColor(0.0f, 0.0f ,0.4f , 0.0f);
 	glutDisplayFunc(obj_display);       // Register callback handler for window re-paint event
+	//glClearColor(0.0f, 0.0f ,0.4f , 0.0f);
+	
 	glutReshapeFunc(reshape);       // Register callback handler for window re-size event
 	initGL();                       // Our own OpenGL initialization
 	glutTimerFunc(0, timer, 0);     // First timer call immediately

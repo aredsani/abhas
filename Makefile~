@@ -16,7 +16,7 @@ INC_DIR4= lGLEW
 CXXFLAGS= -Wall -g -$(INC_DIR1) -$(INC_DIR2) -$(INC_DIR3) -$(INC_DIR4) 
 CXXFLAGS2= -Wall -g -I$(LIB_DIR) 
 
-all: random.cpp LIB_objLoader LIB_shapes
+all: random.cpp LIB_shapes LIB_objLoader 
 	$(CXX) $(CXXFLAGS) -I.  random.cpp objloader.o shapes.o -o run
 	rm -f *.o
 

@@ -14,11 +14,10 @@
 #include <iterator>
 
 using namespace std;
-extern "C"
- {
+extern "C"{
     #include <pthread.h>
     #include <unistd.h>
- }
+}
  
 int ComFlag;
 int ComOutput;
@@ -42,34 +41,21 @@ GLuint LoadTextureRAW( const char * filename );
 
 
 
-void DisplaySphere (double R, GLuint texture)
-{
-
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-
+void DisplaySphere (double R, GLuint texture){
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     int b;
     glScalef (0.0125 * R, 0.0125 * R, 0.0125 * R);
     glRotatef (-90, 1, 0, 0);
-   glBindTexture (GL_TEXTURE_2D, texture);
+	glBindTexture (GL_TEXTURE_2D, texture);
     glBegin (GL_TRIANGLE_STRIP);
-    for ( b = 0; b <VertexCount; b++)
-    {
+    for ( b = 0; b <VertexCount; b++){
         glTexCoord2f (VERTEX[b].U, VERTEX[b].V);
         glVertex3f (VERTEX[b].X, VERTEX[b].Y, -VERTEX[b].Z);
     }
-
-
-
-for ( b = 0; b <VertexCount; b++)
-{
-
-    glTexCoord2f (VERTEX[b].U, -VERTEX[b].V);
-
-    glVertex3f (VERTEX[b].X, VERTEX[b].Y, VERTEX[b].Z);
-
-}
-
+	for ( b = 0; b <VertexCount; b++){
+		glTexCoord2f (VERTEX[b].U, -VERTEX[b].V);
+		glVertex3f (VERTEX[b].X, VERTEX[b].Y, VERTEX[b].Z);
+	}
     glEnd();
 }
 void CreateSphere (double R, double H, double K, double Z) {
@@ -138,32 +124,17 @@ void display (void) {
 void init (void) {
     glEnable(GL_DEPTH_TEST);
     glEnable( GL_TEXTURE_2D );
-
     glDepthFunc(GL_LEQUAL);
-
     texture= LoadTextureRAW( "earth.bmp" );
-
-    
 }
-void reshape (int w, int h) {
-
-    glViewport (0, 0, (GLsizei)w, (GLsizei)h);
-
-    glMatrixMode (GL_PROJECTION);
-
-    glLoadIdentity ();
-
-    gluPerspective (60, (GLfloat)w / (GLfloat)h, 0.1, 100.0);
-
-    glMatrixMode (GL_MODELVIEW);
+void reshape (int w, int h){
+	glViewport (0, 0, (GLsizei)w, (GLsizei)h);
+	glMatrixMode (GL_PROJECTION);
+	glLoadIdentity ();
+	gluPerspective (60, (GLfloat)w / (GLfloat)h, 0.1, 100.0);
+	glMatrixMode (GL_MODELVIEW);
 }
-void workerFunc(){
-	boost::posix_time::seconds workTime(3);
-	std::cout << "Worker: running" << std::endl;
-    // Pretend to do something useful...
-	boost::this_thread::sleep(workTime);
-	std::cout << "Worker: finished" << std::endl;
-}
+
 void *junky(void * argument){
 	glutInit (&argc1, argv1);
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_DEPTH);
@@ -178,48 +149,13 @@ void *junky(void * argument){
 	glutMainLoop ();
 	return 0;
 }
-void  * function1(void * argument);
-void  * function2(void * argument);
 int main (int argc,char **argv){
 	argc1=argc;
 	argv1=argv;
-	/*glutInit (&argc, argv);
-    glutInitDisplayMode (GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowSize (500, 500);
-    glutInitWindowPosition (100, 100);
-    glutCreateWindow ("A basic OpenGL Window");
-    init();
-    CreateSphere(300,0,0,0);
-    
-    glutDisplayFunc (display);
-    //glutIdleFunc (display);
-    glutReshapeFunc (reshape);
-    glutMainLoop ();
-
-    std::cout << "main: startup" << std::endl;
-	boost::thread workerThread(gestureREC),workerThread2(junky);
-    
-
-    std::cout << "main: waiting for thread" << std::endl;
-	workerThread2.join();
-    workerThread.join();
-    
-
-    std::cout << "main: done" << std::endl;*/
-    pthread_t t1, t2 ; // declare 2 threads.
-    pthread_create( &t1, NULL, junky,NULL); // create a thread running function1
-    pthread_create( &t2, NULL, gestureREC,NULL); // create a thread running function2
-
-    // Because all created threads are terminated when main() finishes, we have
-    // to give the threads some time to finish. Unfortunately for function1, main()
-    // will give only 1 second, but function1 needs at least 2 seconds. So function1 will
-    // probably be terminated before it can finish. This is a BAD way to manage threads.
-    sleep(1000);
-    
-
-
-
-    
+	pthread_t t1, t2 ; // declare 2 threads.
+	pthread_create( &t1, NULL, junky,NULL); // create a thread running function1
+	pthread_create( &t2, NULL, gestureREC,NULL); // create a thread running function2
+	sleep(5000);
     return 0;
 }
 GLuint LoadTextureRAW( const char * filename ){
@@ -232,7 +168,6 @@ GLuint LoadTextureRAW( const char * filename ){
 	width=3200;//hard coded for the image
 	height=1600; //This is also hard coded ;)
 	data = (unsigned char *)malloc( width * height * 3 );
-    //int size = fseek(file,);
 	fread( data, width * height * 3, 1, file );
 	fclose( file );
 	for(int i = 0; i < width * height ; ++i){
@@ -240,7 +175,6 @@ GLuint LoadTextureRAW( const char * filename ){
 		unsigned char B,R;
 		B = data[index];
 		R = data[index+2];
-		//B = data[index];
 		data[index] = R;
 		data[index+2] = B;
 	}

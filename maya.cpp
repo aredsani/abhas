@@ -138,10 +138,12 @@ void *gestureREC(void * argument){
   line(frame1, list[0], list[2], Scalar(25,65,200),2,8, 0);
   Start1.x=list[0].x; Start1.y=list[0].y; End1.x=list[2].x; End1.y=list[2].y;
   if(flag2_2==false) { Start2.x=list[0].x; Start2.y=list[0].y; End2.x=list[2].x; End2.y=list[2].y;}
-  if(fabs(dist(Start1, End1)/dist(Start2, End2))>1.3) { cout<<"zoom-out"<<endl ;}// ZOOM OUT
+	if(fabs(dist(Start1, End1)/dist(Start2, End2))>1.3){
+		cout<<"zoom-out"<<endl;// ZOOM OUT
+	}
   if(fabs(dist(Start1, End1)/dist(Start2, End2))<0.7){ cout<<"zoom-in"<<endl;}// ZOOM IN
   Start2.x=list[0].x; Start2.y=list[0].y; End2.x=list[2].x; End2.y=list[2].y;
-  cout<<dist(Start1, End1)<<" "<<dist(Start2, End2)<<endl;
+  //cout<<dist(Start1, End1)<<" "<<dist(Start2, End2)<<endl;
   flag2_2=true;
  }
  avMc2.x=avMc1.x; avMc2.y=avMc1.y;
@@ -155,8 +157,8 @@ void *gestureREC(void * argument){
   break;}
  counter++;
  }
- cout<<moveoutput<<endl;
- return 0;
+	//cout<<moveoutput<<endl;
+	return 0;
 }
 
  

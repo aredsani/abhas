@@ -19,6 +19,10 @@ extern "C"
     #include <pthread.h>
     #include <unistd.h>
  }
+ 
+int ComFlag;
+int ComOutput;
+
 GLuint texture;
 double angle = 0;
 typedef struct{
@@ -116,7 +120,20 @@ void display (void) {
     glRotatef(angle,0,1,0);
     DisplaySphere(1, texture);
     glutSwapBuffers();
-    angle +=0.015f;
+    if(ComFlag==1){
+		if(ComOutput==1){
+			ComFlag=0;
+			ComOutput=0;
+			angle +=15.0f;
+		}
+		else if(ComOutput==2){
+			ComFlag=0;
+			ComOutput=0;	
+			angle -=15.0f;		
+		}
+		
+		
+    }
 }
 void init (void) {
     glEnable(GL_DEPTH_TEST);
@@ -205,54 +222,28 @@ int main (int argc,char **argv){
     
     return 0;
 }
-
-void * function1(void * argument)
-{
-    cout << " hello " << endl ;
-    sleep(2); // fall alseep here for 2 seconds...
-    return 0;
-}
-
-void * function2(void * argument)
-{
-    cout << " world "  << endl ;
-    return 0;
-}
 GLuint LoadTextureRAW( const char * filename ){
 	GLuint texture;
 	int width, height;
 	unsigned char * data;
 	FILE * file;
-
-
-
-  file = fopen( filename, "rb" );
-
-  if ( file == NULL ) return 0;
-
-
-
-  width = 3200;
-
-  height = 1600;
-
-  data = (unsigned char *)malloc( width * height * 3 );
-
-
+	file = fopen( filename, "rb" );
+	if ( file == NULL ) return 0;
+	width=3200;//hard coded for the image
+	height=1600; //This is also hard coded ;)
+	data = (unsigned char *)malloc( width * height * 3 );
     //int size = fseek(file,);
-  fread( data, width * height * 3, 1, file );
-
-  fclose( file );
-
-for(int i = 0; i < width * height ; ++i){
-    int index = i*3;
-    unsigned char B,R;
-    B = data[index];
-    R = data[index+2];
-    //B = data[index];
-    data[index] = R;
-    data[index+2] = B;
-}
+	fread( data, width * height * 3, 1, file );
+	fclose( file );
+	for(int i = 0; i < width * height ; ++i){
+		int index = i*3;
+		unsigned char B,R;
+		B = data[index];
+		R = data[index+2];
+		//B = data[index];
+		data[index] = R;
+		data[index+2] = B;
+	}
 
 
     glGenTextures( 1, &texture );
@@ -267,5 +258,5 @@ for(int i = 0; i < width * height ; ++i){
     gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width, height,GL_RGB, GL_UNSIGNED_BYTE, data );
     free( data );
 
-return texture;
+	return texture;
 }

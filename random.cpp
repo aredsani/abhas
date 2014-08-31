@@ -148,13 +148,7 @@ void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integ
    // Enable perspective projection with fovy, aspect, zNear and zFar
    gluPerspective(45.0f, aspect, 0.1f, 100.0f);
 }
-void workerFunc(){
-	boost::posix_time::seconds workTime(3);
-	std::cout << "Worker: running" << std::endl;
-    // Pretend to do something useful...
-	boost::this_thread::sleep(workTime);
-	std::cout << "Worker: finished" << std::endl;
-}
+
 /* Main function: GLUT runs as a console application starting at main() */
 int main(int argc, char** argv) {
 	//vector<vertex> edges,ac,ad;

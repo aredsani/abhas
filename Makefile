@@ -16,8 +16,8 @@ INC_SOME= /usr/local/include
 CXXFLAGS= -Wall -g -$(INC_DIR1) -$(INC_DIR2) -$(INC_DIR3) -$(INC_DIR4) 
 CXXFLAGS2= -Wall -g -I$(LIB_DIR) 
 CXXFlags3= -Wall -g -I$(LIB_DIR) -I$(INC_SOME)
-all: random1.cpp texture.cpp shader.cpp LIB_shapes LIB_objLoader 
-	$(CXX)  -I. $(CXXFlags3) random1.cpp  shader.cpp objloader.o shapes.o  -pthread $(CXXFLAGS) -I/usr/local/include -lboost_thread -L/usr/local/lib  `pkg-config --cflags opencv` maya.cpp  `pkg-config --libs opencv` -o run
+all: random1.cpp  
+	$(CXX)  -I. $(CXXFlags3) random1.cpp  -pthread $(CXXFLAGS) -I/usr/local/include -lboost_thread -L/usr/local/lib  `pkg-config --cflags opencv` maya.cpp  `pkg-config --libs opencv` -o run
 	rm -f *.o
 
 LIB_objLoader: objloader.cpp
